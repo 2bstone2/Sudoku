@@ -10,8 +10,9 @@ import SpriteKit
 import GameplayKit
 
 class GameScene: SKScene {
-    // TODO: Make subclass
-    var superGridArray = [SKSpriteNode]() // holds outside Grids
+    // TODO: Make a subclass
+    //var arr = [[Int]](repeating: [Int](repeating: 0, count: 5), count: 5)
+    var superGridArray = [[SKSpriteNode]]() // holds outside Grids
     var subGridArray = [SKSpriteNode]() // holds the 9 little tiles
     
     //private var label : SKLabelNode?
@@ -34,15 +35,27 @@ class GameScene: SKScene {
         if let grid = Grid(blockSize: 72, rows:9, cols:9) {
             grid.position = CGPoint (x:frame.midX, y:frame.midY)
             addChild(grid)
-
+            
+            // Populate with tiles, do later, for now populate with clear spriteNodes
             for i in 0..<9 {
                 for j in 0..<9 {
-                    let tile = SKSpriteNode(imageNamed: "Demo_Sudoku_Tile")
+                    //let tile = SKSpriteNode(imageNamed: "Demo_Sudoku_Tile")
+                    let tile = SKSpriteNode(color: .clear , size: grid.size)
+                    let tileLabel = SKLabelNode()
                     tile.setScale(1)
                     tile.position = grid.gridPosition(row: i, col: j)
+                    tile.name = String(i) + String(j)
+                    tileLabel.text = tile.name
+                    tileLabel.position = tile.position
+                    tile.isUserInteractionEnabled = false
+                    print(tile.name!, tileLabel.text!)
                     grid.addChild(tile)
+                    grid.addChild(tileLabel)
+                    //self.superGridArray[i][j] = tile
+                    //print(superGridArray[i][j].name!)
                 }
             }
+
             
         }
         
@@ -98,6 +111,28 @@ class GameScene: SKScene {
          spriteArray.append(letterSprite)
          }*/
     }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
+    {
+        let touch:UITouch = touches.first!
+        let positionInScene = touch.location(in: self)
+        let touchedNode = self.atPoint(positionInScene)
+
+        if let name = touchedNode.name
+        {
+            for i in 0..<9 {
+                for j in 0..<9 {
+                    if name == String(i)+String(j)
+                    {
+                        print("tile \(name) touched, i check: \(i) j: check \(j)")
+                    }
+                    
+                }
+            }
+        }
+
+    }
+    
     func setupGrid() {
         let superGridIdx = 9
         let subGridIdx = 9
@@ -198,7 +233,7 @@ class Grid:SKSpriteNode {
             bezierPath.addLine(to: CGPoint(x: size.width, y: y))
         }
         SKColor.white.setStroke()
-        bezierPath.lineWidth = 2.0
+        bezierPath.lineWidth = 3.0
         bezierPath.stroke()
         context.addPath(bezierPath.cgPath)
         let image = UIGraphicsGetImageFromCurrentImageContext()
@@ -213,9 +248,19 @@ class Grid:SKSpriteNode {
         let y = CGFloat(rows - row - 1) * tileSize - (tileSize * CGFloat(rows)) / 2.0 + offset
         return CGPoint(x:x, y:y)
     }
+    
+    
 }
 
-
+extension SKSpriteNode {
+    func drawBorder(color: UIColor, width: CGFloat) {
+        let shapeNode = SKShapeNode(rect: frame)
+        shapeNode.fillColor = .clear
+        shapeNode.strokeColor = color
+        shapeNode.lineWidth = 2
+        addChild(shapeNode)
+    }
+}
 
 
 
