@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		7778842F25776DBD004D696A /* GameboardScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 7778842E25776DBD004D696A /* GameboardScene.sks */; };
 		7778843125777513004D696A /* SudokuTileSet.sks in Resources */ = {isa = PBXBuildFile; fileRef = 7778843025777513004D696A /* SudokuTileSet.sks */; };
+		777DC06B2578F3EF00CC1B97 /* MenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 777DC06A2578F3EF00CC1B97 /* MenuScene.swift */; };
 		777FBB4825775DD9004A59D6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 777FBB4725775DD9004A59D6 /* AppDelegate.swift */; };
 		777FBB4A25775DD9004A59D6 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 777FBB4925775DD9004A59D6 /* GameScene.sks */; };
 		777FBB4C25775DD9004A59D6 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 777FBB4B25775DD9004A59D6 /* Actions.sks */; };
@@ -41,6 +42,7 @@
 /* Begin PBXFileReference section */
 		7778842E25776DBD004D696A /* GameboardScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameboardScene.sks; sourceTree = "<group>"; };
 		7778843025777513004D696A /* SudokuTileSet.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SudokuTileSet.sks; sourceTree = "<group>"; };
+		777DC06A2578F3EF00CC1B97 /* MenuScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuScene.swift; sourceTree = "<group>"; };
 		777FBB4425775DD9004A59D6 /* Sudoku.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sudoku.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		777FBB4725775DD9004A59D6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		777FBB4925775DD9004A59D6 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -108,14 +110,15 @@
 			isa = PBXGroup;
 			children = (
 				777FBB4725775DD9004A59D6 /* AppDelegate.swift */,
-				777FBB4B25775DD9004A59D6 /* Actions.sks */,
-				7778842E25776DBD004D696A /* GameboardScene.sks */,
 				777FBB4D25775DD9004A59D6 /* GameScene.swift */,
 				777FBB4F25775DD9004A59D6 /* GameViewController.swift */,
+				777DC06A2578F3EF00CC1B97 /* MenuScene.swift */,
 				777FBB5125775DD9004A59D6 /* Main.storyboard */,
 				777FBB5425775DDB004A59D6 /* Assets.xcassets */,
 				777FBB5625775DDB004A59D6 /* LaunchScreen.storyboard */,
 				777FBB5925775DDB004A59D6 /* Info.plist */,
+				7778842E25776DBD004D696A /* GameboardScene.sks */,
+				777FBB4B25775DD9004A59D6 /* Actions.sks */,
 				777FBB4925775DD9004A59D6 /* GameScene.sks */,
 				7778843025777513004D696A /* SudokuTileSet.sks */,
 			);
@@ -276,6 +279,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				777FBB4E25775DD9004A59D6 /* GameScene.swift in Sources */,
+				777DC06B2578F3EF00CC1B97 /* MenuScene.swift in Sources */,
 				777FBB5025775DD9004A59D6 /* GameViewController.swift in Sources */,
 				777FBB4825775DD9004A59D6 /* AppDelegate.swift in Sources */,
 			);
