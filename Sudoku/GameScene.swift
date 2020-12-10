@@ -15,21 +15,27 @@ class GameScene: SKScene {
     var superGridArray = [[SKSpriteNode]]() // holds outside Grids
     var background = SKNode() // where image will be set
     var componentLayer = SKNode() // contains grid, choice tiles, timer etc
-    var tileImageName = "Demo_Sudoku_Tile"
+    let tileImageName = "Demo_Sudoku_Tile"
+    let gameFont = "HelveticaNeue"
     var timer: Timer? = nil
     var timerLabel = SKLabelNode()
+    var minutes: Int = 0
     var seconds: Int = 0 {
         didSet {
-            timerLabel.text = "\(seconds / 60):\(seconds % 60)"
+            minutes = seconds / 60 % 60
+            timerLabel.text = String(format:"%02i:%02i", minutes, seconds % 60)
+            //timerLabel.text = "\(seconds / 60):\(seconds % 60)"
         }
     }
     
     override func didMove(to view: SKView) {
+        print("in gameScene")
+        self.componentLayer.zPosition = 1
         self.addChild(componentLayer)
         startTimer()
         self.timerLabel.position = CGPoint(x: 0, y: 525)
         self.timerLabel.fontSize = 40
-        self.timerLabel.fontName = "HelveticaNeue-Bold"
+        self.timerLabel.fontName = gameFont + "-Bold"
         self.componentLayer.addChild(timerLabel)
         
         // TODO: Load GU theme image later
@@ -72,7 +78,7 @@ class GameScene: SKScene {
             let tileLabel = SKLabelNode()
             tile.setScale(1)
             tileLabel.text = String(i)
-            tileLabel.fontName = tileLabel.fontName! + "-Bold"
+            tileLabel.fontName = gameFont + "-Bold"
             tile.name = String(i)
             //let x = CGFloat(i) * tileSize - (tileSize * CGFloat(9)) / 2.0 + offset
             let x1 = CGFloat(i) * CGFloat(tileSize)
@@ -108,6 +114,11 @@ class GameScene: SKScene {
                     for j in 0..<9 {
                         if name == String(i)+String(j) {
                             print("tile \(name) touched, i check: \(i) j: check \(j)")
+                            let tile = SKSpriteNode(imageNamed: tileImageName)
+                            tile.setScale(1)
+                            tile.position = touchedNode.position
+                            componentLayer.addChild(tile)
+                            componentLayer.zPosition = 1
                         }
                     }
                 }

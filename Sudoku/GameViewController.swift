@@ -10,6 +10,8 @@ import UIKit
 import SpriteKit
 
 class GameViewController: UIViewController {
+    
+    var sudoku = Sudoku()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,6 +31,8 @@ class GameViewController: UIViewController {
                 
                 view.showsFPS = true
                 view.showsNodeCount = true
+                
+                self.sudoku.populateArrays()
             }
         }
     }

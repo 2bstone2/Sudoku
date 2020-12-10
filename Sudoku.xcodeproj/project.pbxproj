@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		77052431257F72220011073D /* SudokuModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77052430257F72220011073D /* SudokuModel.swift */; };
 		7778842F25776DBD004D696A /* GameboardScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 7778842E25776DBD004D696A /* GameboardScene.sks */; };
 		7778843125777513004D696A /* SudokuTileSet.sks in Resources */ = {isa = PBXBuildFile; fileRef = 7778843025777513004D696A /* SudokuTileSet.sks */; };
 		777DC06B2578F3EF00CC1B97 /* MenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 777DC06A2578F3EF00CC1B97 /* MenuScene.swift */; };
@@ -40,6 +41,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		77052430257F72220011073D /* SudokuModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuModel.swift; sourceTree = "<group>"; };
 		7778842E25776DBD004D696A /* GameboardScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameboardScene.sks; sourceTree = "<group>"; };
 		7778843025777513004D696A /* SudokuTileSet.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SudokuTileSet.sks; sourceTree = "<group>"; };
 		777DC06A2578F3EF00CC1B97 /* MenuScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuScene.swift; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 				777FBB4B25775DD9004A59D6 /* Actions.sks */,
 				777FBB4925775DD9004A59D6 /* GameScene.sks */,
 				7778843025777513004D696A /* SudokuTileSet.sks */,
+				77052430257F72220011073D /* SudokuModel.swift */,
 			);
 			path = Sudoku;
 			sourceTree = "<group>";
@@ -278,6 +281,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				77052431257F72220011073D /* SudokuModel.swift in Sources */,
 				777FBB4E25775DD9004A59D6 /* GameScene.swift in Sources */,
 				777DC06B2578F3EF00CC1B97 /* MenuScene.swift in Sources */,
 				777FBB5025775DD9004A59D6 /* GameViewController.swift in Sources */,
