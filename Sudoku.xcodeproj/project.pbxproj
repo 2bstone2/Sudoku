@@ -111,19 +111,19 @@
 		777FBB4625775DD9004A59D6 /* Sudoku */ = {
 			isa = PBXGroup;
 			children = (
-				777FBB4725775DD9004A59D6 /* AppDelegate.swift */,
 				777FBB4D25775DD9004A59D6 /* GameScene.swift */,
-				777FBB4F25775DD9004A59D6 /* GameViewController.swift */,
 				777DC06A2578F3EF00CC1B97 /* MenuScene.swift */,
+				777FBB4F25775DD9004A59D6 /* GameViewController.swift */,
+				77052430257F72220011073D /* SudokuModel.swift */,
 				777FBB5125775DD9004A59D6 /* Main.storyboard */,
 				777FBB5425775DDB004A59D6 /* Assets.xcassets */,
+				777FBB4725775DD9004A59D6 /* AppDelegate.swift */,
 				777FBB5625775DDB004A59D6 /* LaunchScreen.storyboard */,
 				777FBB5925775DDB004A59D6 /* Info.plist */,
-				7778842E25776DBD004D696A /* GameboardScene.sks */,
 				777FBB4B25775DD9004A59D6 /* Actions.sks */,
 				777FBB4925775DD9004A59D6 /* GameScene.sks */,
+				7778842E25776DBD004D696A /* GameboardScene.sks */,
 				7778843025777513004D696A /* SudokuTileSet.sks */,
-				77052430257F72220011073D /* SudokuModel.swift */,
 			);
 			path = Sudoku;
 			sourceTree = "<group>";

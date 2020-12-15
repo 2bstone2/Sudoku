@@ -12,7 +12,7 @@ import GameplayKit
 class GameScene: SKScene {
     // TODO: Make a subclass
     //var arr = [[Int]](repeating: [Int](repeating: 0, count: 5), count: 5)
-    var superGridArray = [[SKSpriteNode]]() // holds outside Grids
+    var superGridArray = [[SKSpriteNode]](repeating: [SKSpriteNode](repeating: SKSpriteNode() , count: 9), count: 9) // holds outside Grids
     var background = SKNode() // where image will be set
     var componentLayer = SKNode() // contains grid, choice tiles, timer etc
     let tileImageName = "Demo_Sudoku_Tile"
@@ -60,7 +60,8 @@ class GameScene: SKScene {
                     print(tile.name!, tileLabel.text!)
                     grid.addChild(tile)
                     grid.addChild(tileLabel)
-                    //self.superGridArray[i][j] = tile
+                    self.superGridArray[i][j] = tile
+                    print("tile: \(self.superGridArray[i][j].name) position: \(self.superGridArray[i][j].position)")
                     //print(superGridArray[i][j].name!)
                 }
             }
@@ -101,7 +102,7 @@ class GameScene: SKScene {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
     {
-        let touch:UITouch = touches.first!
+        let touch: UITouch = touches.first!
         let positionInScene = touch.location(in: self)
         let touchedNode = self.atPoint(positionInScene)
         print("positionInScene: \(positionInScene)")
@@ -112,13 +113,16 @@ class GameScene: SKScene {
             if name.count == 2 {
                 for i in 0..<9 {
                     for j in 0..<9 {
-                        if name == String(i)+String(j) {
-                            print("tile \(name) touched, i check: \(i) j: check \(j)")
+                        //if name == String(i)+String(j) {
+                        if superGridArray[i][j].contains(positionInScene) {
+                            print("tile \(superGridArray[i][j].name!) touched, position of tile: \(superGridArray[i][j].position)")
+                            print("touchedNode: \(touchedNode.name) position: \(touchedNode.position)")
                             let tile = SKSpriteNode(imageNamed: tileImageName)
                             tile.setScale(1)
                             tile.position = touchedNode.position
                             componentLayer.addChild(tile)
                             componentLayer.zPosition = 1
+                            return;
                         }
                     }
                 }

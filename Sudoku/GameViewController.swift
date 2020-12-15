@@ -16,6 +16,8 @@ class GameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let tap = UITapGestureRecognizer(target: self, action: #selector(touchedScreen(touch:)))
+            view.addGestureRecognizer(tap)
 
         
         if let view = self.view as! SKView? {
@@ -24,9 +26,8 @@ class GameViewController: UIViewController {
                 // Set the scale mode to scale to fit the window
                 scene.scaleMode = .aspectFill
                     
-                    // Present the scene
+                // Present the scene
                 view.presentScene(scene)
-                    
                 view.ignoresSiblingOrder = true
                 
                 view.showsFPS = true
@@ -35,6 +36,11 @@ class GameViewController: UIViewController {
                 self.sudoku.populateArrays()
             }
         }
+    }
+    
+    @objc func touchedScreen(touch: UITapGestureRecognizer) {
+        let touchPoint = touch.location(in: self.view)
+        print(touchPoint)
     }
 
     /*override var shouldAutorotate: Bool {
