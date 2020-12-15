@@ -13,7 +13,7 @@ class GameScene: SKScene {
     // TODO: Make a subclass
     //var arr = [[Int]](repeating: [Int](repeating: 0, count: 5), count: 5)
     var superGridArray = [[SKSpriteNode]](repeating: [SKSpriteNode](repeating: SKSpriteNode() , count: 9), count: 9) // holds outside Grids
-    var background = SKNode() // where image will be set
+    var background = SKSpriteNode() // where image will be set
     var componentLayer = SKNode() // contains grid, choice tiles, timer etc
     let tileImageName = "Demo_Sudoku_Tile"
     let gameFont = "HelveticaNeue"
@@ -33,20 +33,31 @@ class GameScene: SKScene {
         self.componentLayer.zPosition = 1
         self.addChild(componentLayer)
         startTimer()
-        self.timerLabel.position = CGPoint(x: 0, y: 525)
-        self.timerLabel.fontSize = 40
+        self.timerLabel.position = CGPoint(x: 0, y: 372)
+        self.timerLabel.fontSize = 50
         self.timerLabel.fontName = gameFont + "-Bold"
         self.componentLayer.addChild(timerLabel)
         
         // TODO: Load GU theme image later
-        self.backgroundColor = UIColor.systemGray2
+        //self.backgroundColor = UIColor.systemGray2
+        background = SKSpriteNode(imageNamed: "SudokuBoardBackground1.png")
+        background.size = CGSize(width: self.frame.width, height: self.frame.height)
+        background.zPosition = -1
+        addChild(background)
         
+        //"SudokuBoardBackground1.png"
+        loadBoard()
+        createNumberChoiceNodes()
+    }
+    
+    func loadBoard() {
         if let grid = Grid(blockSize: 72, rows:9, cols:9) {
             grid.position = CGPoint (x:frame.midX, y:frame.midY)
             self.componentLayer.addChild(grid)
             
             // Populate with tiles, do later, for now populate with clear spriteNodes
             for i in 0..<9 {
+                
                 for j in 0..<9 {
                     //let tile = SKSpriteNode(imageNamed: "tileImageName")
                     let tile = SKSpriteNode(color: .clear , size: grid.size)
@@ -61,13 +72,11 @@ class GameScene: SKScene {
                     grid.addChild(tile)
                     grid.addChild(tileLabel)
                     self.superGridArray[i][j] = tile
-                    print("tile: \(self.superGridArray[i][j].name) position: \(self.superGridArray[i][j].position)")
+                    print("tile: \(self.superGridArray[i][j].name!) position: \(self.superGridArray[i][j].position)")
                     //print(superGridArray[i][j].name!)
                 }
             }
         }
-        createNumberChoiceNodes()
-
     }
     
     func createNumberChoiceNodes() {
@@ -89,6 +98,8 @@ class GameScene: SKScene {
             tile.position = CGPoint(x: x, y: y)
             tileLabel.position = CGPoint(x: x, y: y - 8)
             tile.isUserInteractionEnabled = false
+            tile.zPosition = 0
+            tileLabel.zPosition = 1
             self.componentLayer.addChild(tile)
             self.componentLayer.addChild(tileLabel)
         }
@@ -118,10 +129,10 @@ class GameScene: SKScene {
                             print("tile \(superGridArray[i][j].name!) touched, position of tile: \(superGridArray[i][j].position)")
                             print("touchedNode: \(touchedNode.name) position: \(touchedNode.position)")
                             let tile = SKSpriteNode(imageNamed: tileImageName)
-                            tile.setScale(1)
-                            tile.position = touchedNode.position
-                            componentLayer.addChild(tile)
+                            tile.setScale(0.92)
+                            tile.position = CGPoint(x: Int(touchedNode.position.x), y: Int(touchedNode.position.y) + Int(0.25))
                             componentLayer.zPosition = 1
+                            componentLayer.addChild(tile)
                             return;
                         }
                     }
@@ -157,30 +168,52 @@ class Grid: SKSpriteNode {
 
     class func gridTexture(blockSize:CGFloat,rows:Int,cols:Int) -> SKTexture? {
         // Add 1 to the height and width to ensure the borders are within the sprite
-        let size = CGSize(width: CGFloat(cols)*blockSize+1.0, height: CGFloat(rows)*blockSize+1.0)
+        let size = CGSize(width: CGFloat(cols) * blockSize + 1.0, height: CGFloat(rows) * blockSize + 2.0)
         UIGraphicsBeginImageContext(size)
 
         guard let context = UIGraphicsGetCurrentContext() else {
             return nil
         }
+        let outerBezierPath = UIBezierPath()
         let bezierPath = UIBezierPath()
         let offset: CGFloat = 0.5
+        
+        // Draw outer grid
+        // Draw vertical lines
+        for i in 0...3 {
+            let outerX = (3 * CGFloat(i) * blockSize) + offset
+            outerBezierPath.move(to: CGPoint(x: outerX, y: 0))
+            outerBezierPath.addLine(to: CGPoint(x: outerX, y: size.height + 2))
+        }
+        // Draw horizontal lines
+        for i in 0...3 {
+            let outerY = (3 * CGFloat(i) * blockSize) + offset
+            outerBezierPath.move(to: CGPoint(x: 0, y: outerY))
+            outerBezierPath.addLine(to: CGPoint(x: size.width + 10, y: outerY))
+        }
+        
+        
         // Draw vertical lines
         for i in 0...cols {
-            let x = CGFloat(i)*blockSize + offset
+            let x = CGFloat(i) * blockSize + offset
             bezierPath.move(to: CGPoint(x: x, y: 0))
             bezierPath.addLine(to: CGPoint(x: x, y: size.height))
         }
         // Draw horizontal lines
         for i in 0...rows {
-            let y = CGFloat(i)*blockSize + offset
+            let y = CGFloat(i) * blockSize + offset
             bezierPath.move(to: CGPoint(x: 0, y: y))
             bezierPath.addLine(to: CGPoint(x: size.width, y: y))
         }
         SKColor.white.setStroke()
+        outerBezierPath.lineWidth = 12.0
         bezierPath.lineWidth = 3.0
+        
+        outerBezierPath.stroke()
         bezierPath.stroke()
+        
         context.addPath(bezierPath.cgPath)
+        context.addPath(outerBezierPath.cgPath)
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
 
