@@ -13,9 +13,10 @@ import Foundation
 class Sudoku {
     // TODO: - make array of strings, randomize an idx then choose that puzzle
     var ogPuzzleStr: String = "070000043040009610800634900094052000358460020000800530080070091902100005007040802"
-    var ogPuzzle = [[Int?]](repeating: [Int?](repeating: 0, count: 9), count: 9)
+    var ogPuzzle = [[Int?]](repeating: [Int?](repeating: 0, count: 9), count: 9) // initial array
     var solutionStr: String = "679518243543729618821634957794352186358461729216897534485276391962183475137945862"
-    var solution = [[Int?]](repeating: [Int?](repeating: 0, count: 9), count: 9)
+    var solution = [[Int?]](repeating: [Int?](repeating: 0, count: 9), count: 9) // solution array
+    var gamePuzzle = [[Int?]](repeating: [Int?](repeating: 0, count: 9), count: 9)
     var selectedChoiceTile: Int?
     
     
@@ -42,6 +43,7 @@ class Sudoku {
             }
             print("\n")
         }
+        gamePuzzle = ogPuzzle
     }
     
     
