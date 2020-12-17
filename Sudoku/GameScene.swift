@@ -54,6 +54,7 @@ class GameScene: SKScene {
             multiplierLabel.text = "x" + String(multiplier)
         }
     }
+
     var sudoku = Sudoku()
     var choiceEffectArray = [SKEffectNode](repeating: SKEffectNode(), count: 9)
     var boardEffectArray = [[SKEffectNode]](repeating: [SKEffectNode](repeating: SKEffectNode() , count: 9), count: 9)
@@ -61,7 +62,7 @@ class GameScene: SKScene {
     var boardBorderArray = [[SKShapeNode]](repeating: [SKShapeNode](repeating: SKShapeNode() , count: 9), count: 9)
     let glow: Float = 50
     let unglow: Float = 0
-    var numSpikesRemaining = 3
+    var numSpikes = 0
     
     override func didMove(to view: SKView) {
         //self.anchorPoint = CGPoint(x: frame.midX, y: frame.midY)
@@ -101,10 +102,10 @@ class GameScene: SKScene {
         var xPosition = -150
         for i in 0..<3 {
             let spikeSprite = SKSpriteNode(imageNamed: "FullBulldog.png")
-            spikeSprite.position = CGPoint(x: xPosition, y: -450)
+            spikeSprite.position = CGPoint(x: xPosition, y: -435)
             spikeSprite.setScale(0.125)
             spikeArray[i] = spikeSprite
-            self.componentLayer.addChild(spikeSprite)
+            //self.componentLayer.addChild(spikeSprite)
             xPosition+=150
         }
     
@@ -187,6 +188,22 @@ class GameScene: SKScene {
         })
     }
     
+    func stopTimer() {
+        timer?.invalidate() //optional chaining
+        timer = nil
+    }
+    
+    func pausePressed(_ sender: UIButton) {
+        print("hello from pause")
+        stopTimer()
+    }
+    
+    func resetPressed(_ sender: UIButton) {
+        print("hello from reset")
+        stopTimer()
+        seconds = 0
+    }
+    
     
     func initializeGlowEffectNodes() {
         for i in 0..<9 {
@@ -209,24 +226,26 @@ class GameScene: SKScene {
         //let touchedNode = grid.atPoint(positionInScene)
         let touch: UITouch = touches.first!
         let positionInScene = touch.location(in: self)
+        let touchedNode = background.atPoint(positionInScene)
         let xConstraintLow = positionInScene.x - CGFloat(tileSize / 2)
         let xConstraintHigh = positionInScene.x + CGFloat(tileSize / 2)
         let yConstraintLow = positionInScene.y - CGFloat(tileSize / 2)
         let yConstraintHigh = positionInScene.y + CGFloat(tileSize / 2)
         
         for i in 0..<9 {
-           // if sudoku.selectedChoiceTile != Int(choiceTileArray[i].name!) {
+            //if background.contains(positionInScene) {
+           //if sudoku.selectedChoiceTile == Int(choiceTileArray[i].name!) {
                 choiceTileArray[i].drawBorder(color: .clear, width: 5, borderNode: choiceBorderArray[i])
                 // choiceTileArray[i].addGlow(radius: unglow, effectNode: choiceEffectArray[i])
             //}
            
             if choiceTileArray[i].position.x >= xConstraintLow && choiceTileArray[i].position.x <= xConstraintHigh && choiceTileArray[i].position.y >= yConstraintLow && choiceTileArray[i].position.y <= yConstraintHigh {
+                //choiceTileArray[i].drawBorder(color: .clear, width: 5, borderNode: choiceBorderArray[i])
                 if let name = choiceTileArray[i].name {
                     sudoku.selectedChoiceTile = Int(name)
                     // deselect and unglow previous selected
                     //choiceTileArray[i].addGlow(radius: glow, effectNode: choiceEffectArray[i])
                     choiceTileArray[i].drawBorder(color: .red, width: 5, borderNode: choiceBorderArray[i])
-                    print("The selected tile is: \(sudoku.selectedChoiceTile!)")
                     // maybe return, but probably not bc will affect unglowing
                 }
             }
@@ -235,15 +254,16 @@ class GameScene: SKScene {
         // TODO: add glow to selected tile
         for i in 0..<9 {
             for j in 0..<9 {
-                //superGridArray[i][j].addGlow(radius: unglow, effectNode: boardEffectArray[i][j])
-                superGridArray[i][j].drawBorder(color: UIColor.clear, width: 5, borderNode: boardBorderArray[i][j])
+               // if background.contains(positionInScene) {
+                    superGridArray[i][j].drawBorder(color: UIColor.clear, width: 5, borderNode: boardBorderArray[i][j])
+                //}
                 if sudoku.gamePuzzle[i][j] == sudoku.selectedChoiceTile && !grid.contains(positionInScene) {
                     superGridArray[i][j].drawBorder(color: UIColor.red, width: 5, borderNode: boardBorderArray[i][j])
                     //superGridArray[i][j].addGlow(radius: glow, effectNode: boardEffectArray[i][j])
                     print("adding glow to \(superGridArray[i][j].name!)")
                 }
                 if superGridArray[i][j].position.x >= xConstraintLow && superGridArray[i][j].position.x <= xConstraintHigh && superGridArray[i][j].position.y >= yConstraintLow && superGridArray[i][j].position.y <= yConstraintHigh {
-                    superGridArray[i][j].addGlow(radius: glow, effectNode: boardEffectArray[i][j])
+                    //superGridArray[i][j].addGlow(radius: glow, effectNode: boardEffectArray[i][j])
                     superGridArray[i][j].drawBorder(color: .red, width: 5, borderNode: boardBorderArray[i][j])
                     print("tile: \(superGridArray[i][j].name ?? "") was touched")
                     
@@ -265,7 +285,15 @@ class GameScene: SKScene {
                         
                         // TODO: Call update score
                         updateScore()
+                        checkIfGameWon()
                         checkIfAllTilesFound(numberToCheck: sudoku.selectedChoiceTile!)
+                        //return
+                    }
+                   // else if {
+                        //
+                   // }
+                    else {
+                        addSpike()
                     }
                     //return
                 }
@@ -326,6 +354,32 @@ class GameScene: SKScene {
                 }
             }
         }
+    }
+    
+    func addSpike() {
+        spikeArray[numSpikes].addGlow(radius: 50)
+        spikeArray[numSpikes].isUserInteractionEnabled = true
+        self.componentLayer.addChild(spikeArray[numSpikes])
+        numSpikes+=1
+        
+        if numSpikes == 2 {
+            gameOver()
+        }
+    }
+    
+    func checkIfGameWon() {
+        if !sudoku.gamePuzzle.contains([0]) {
+            stopTimer()
+            print("GAME WON")
+            //TODO: game won
+        }
+    }
+    
+    func gameOver() {
+        //stop timer
+        stopTimer()
+        //display score
+        //
     }
     
 }
@@ -409,43 +463,27 @@ class Grid: SKSpriteNode {
 
 extension SKSpriteNode {
     func drawBorder(color: UIColor, width: CGFloat, borderNode: SKShapeNode ) {
-        //let shapeNode = SKShapeNode(rectOf: CGSize(width: 68, height: 68))
         borderNode.fillColor = .clear
         borderNode.strokeColor = color
+        borderNode.alpha = 0.65
         borderNode.lineWidth = width
         borderNode.glowWidth = 10
         borderNode.zPosition = 2
-        //shapeNode.size = self.size
-        //shapeNode.position = borderNode.position
-       // shapeNode.anchorPoint = self.anchorPoint
-        //addChild(borderNode)
     }
     func initializeGlowEffectNodes(effectNode: SKEffectNode) {
         self.addChild(effectNode)
-        if texture == nil {
-            print("texture is nil")
-            //self.texture = (texture: texture, color:SKColor.clear, size: texture.size())
-        }
-        //else {
-            effectNode.addChild(SKSpriteNode(texture: texture))
-        //}
+        effectNode.addChild(SKSpriteNode(texture: texture))
         effectNode.zPosition = 1
     }
 
-    func addGlow(radius: Float, effectNode: SKEffectNode) {
-        // TODO: check for nil texture here
-        if self.texture == nil && radius != 0 {
-            //self.texture = SKTexture(imageNamed: <#T##String#>)
-        }
-        else if radius == 0 {
-            //self.texture = nil
-        }
-        
-        
+    func addGlow(radius: Float) {
+
+        let effectNode = SKEffectNode()
         effectNode.shouldRasterize = true
         //addChild(effectNode)
-        //effectNode.addChild(SKSpriteNode(texture: texture))
+        effectNode.addChild(SKSpriteNode(texture: texture))
         effectNode.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": radius])
 }
 
+    
 }

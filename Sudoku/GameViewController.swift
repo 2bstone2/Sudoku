@@ -9,9 +9,12 @@
 import UIKit
 import SpriteKit
 
-class GameViewController: UIViewController {
+
+class GameViewController: UIViewController,SKSceneDelegate{
     
     var sudoku = Sudoku()
+    
+   
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,8 +24,9 @@ class GameViewController: UIViewController {
 
         
         if let view = self.view as! SKView? {
+            //view.delegate = SKViewDelegate.self
             // Load the SKScene from 'GameScene.sks'
-            if let scene = SKScene(fileNamed: "GameScene") {
+            if let scene = MenuScene(fileNamed: "MenuScene") {
                 // Set the scale mode to scale to fit the window
                 scene.scaleMode = .aspectFill
                     

@@ -14,8 +14,9 @@ class MenuScene: SKScene {
     var componentLayer = SKNode()
     var playButton = SKSpriteNode()
     var playButtonLabel = SKLabelNode()
-    let gameFont = "HelveticaNeue"
+    let gameFont = "Glypha 75 Black"
     var newScene = GameScene()
+    var sudoku = Sudoku()
     
     override func didMove(to view: SKView) {
         print("in menu")
@@ -32,8 +33,8 @@ class MenuScene: SKScene {
         self.playButton.isUserInteractionEnabled = false
         
         self.playButtonLabel.text = "Play"
-        self.playButtonLabel.fontSize = 32
-        self.playButtonLabel.fontName = gameFont + "-Bold"
+        self.playButtonLabel.fontSize = 60
+        self.playButtonLabel.fontName = gameFont
         self.playButtonLabel.position = playButton.position
         //self.componentLayer.addChild(playButton)
         
@@ -42,7 +43,7 @@ class MenuScene: SKScene {
     }
     
     func transition() {
-        /*if let view = self.view as! SKView? {
+        if let view = self.view as! SKView? {
             // Load the SKScene from 'GameScene.sks'
             if let scene = SKScene(fileNamed: "GameScene") {
                 // Set the scale mode to scale to fit the window
@@ -57,7 +58,7 @@ class MenuScene: SKScene {
                 
                 self.sudoku.populateArrays()
             }
-        }*/
+        }
         
         
         //run(buttonPressAnimation)
@@ -72,6 +73,7 @@ class MenuScene: SKScene {
         for touch in touches {
             if touch == touches.first {
                 print("Segue to gameboard")
+                transition()
                 //self.newScene.transition
             }
         }

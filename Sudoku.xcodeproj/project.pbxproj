@@ -21,6 +21,7 @@
 		777FBB5825775DDB004A59D6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 777FBB5625775DDB004A59D6 /* LaunchScreen.storyboard */; };
 		777FBB6325775DDB004A59D6 /* SudokuTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 777FBB6225775DDB004A59D6 /* SudokuTests.swift */; };
 		777FBB6E25775DDB004A59D6 /* SudokuUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 777FBB6D25775DDB004A59D6 /* SudokuUITests.swift */; };
+		7782BF3A258B826E00F6F6AB /* MenuScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 7782BF39258B826E00F6F6AB /* MenuScene.sks */; };
 		77EAD16E258AFB1E00AB1A5E /* Glypha-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 77EAD16D258AFB1E00AB1A5E /* Glypha-Black.otf */; };
 /* End PBXBuildFile section */
 
@@ -62,6 +63,7 @@
 		777FBB6925775DDB004A59D6 /* SudokuUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SudokuUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		777FBB6D25775DDB004A59D6 /* SudokuUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuUITests.swift; sourceTree = "<group>"; };
 		777FBB6F25775DDB004A59D6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7782BF39258B826E00F6F6AB /* MenuScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MenuScene.sks; sourceTree = "<group>"; };
 		77EAD16D258AFB1E00AB1A5E /* Glypha-Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Glypha-Black.otf"; path = "../../../../../Downloads/Glypha-Black.otf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -127,6 +129,7 @@
 				777FBB4925775DD9004A59D6 /* GameScene.sks */,
 				7778842E25776DBD004D696A /* GameboardScene.sks */,
 				7778843025777513004D696A /* SudokuTileSet.sks */,
+				7782BF39258B826E00F6F6AB /* MenuScene.sks */,
 			);
 			path = Sudoku;
 			sourceTree = "<group>";
@@ -260,6 +263,7 @@
 				777FBB5525775DDB004A59D6 /* Assets.xcassets in Resources */,
 				777FBB5825775DDB004A59D6 /* LaunchScreen.storyboard in Resources */,
 				77EAD16E258AFB1E00AB1A5E /* Glypha-Black.otf in Resources */,
+				7782BF3A258B826E00F6F6AB /* MenuScene.sks in Resources */,
 				777FBB4C25775DD9004A59D6 /* Actions.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
