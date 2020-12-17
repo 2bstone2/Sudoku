@@ -33,7 +33,7 @@ class GameViewController: UIViewController {
                 view.showsFPS = true
                 view.showsNodeCount = true
                 
-                self.sudoku.populateArrays()
+                //self.sudoku.populateArrays()
             }
         }
     }

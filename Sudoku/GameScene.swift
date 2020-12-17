@@ -14,6 +14,7 @@ class GameScene: SKScene {
     //var arr = [[Int]](repeating: [Int](repeating: 0, count: 5), count: 5)
     var tileSize = 72.0
     var superGridArray = [[SKSpriteNode]](repeating: [SKSpriteNode](repeating: SKSpriteNode() , count: 9), count: 9) // holds outside Grids
+    var choiceTileArray = [SKSpriteNode](repeating: SKSpriteNode(), count: 9)
     var background = SKSpriteNode() // where image will be set
     var componentLayer = SKNode() // contains grid, choice tiles, timer etc
     var tileLayer = SKNode()
@@ -39,6 +40,7 @@ class GameScene: SKScene {
             scoreLabel.text = "Score: " + formattedNumber!
         }
     }
+    var sudoku = Sudoku()
     
     override func didMove(to view: SKView) {
         //self.anchorPoint = CGPoint(x: frame.midX, y: frame.midY)
@@ -69,6 +71,7 @@ class GameScene: SKScene {
         //"SudokuBoardBackground1.png"
         loadBoard()
         createNumberChoiceNodes()
+        populateGameboard()
     }
     
     func loadBoard() {
@@ -124,6 +127,7 @@ class GameScene: SKScene {
             tile.isUserInteractionEnabled = false
             tile.zPosition = 0
             tileLabel.zPosition = 1
+            self.choiceTileArray[i - 1] = tile
             self.componentLayer.addChild(tile)
             self.componentLayer.addChild(tileLabel)
         }
@@ -140,8 +144,6 @@ class GameScene: SKScene {
         //let touchedNode = grid.atPoint(positionInScene)
         let touch: UITouch = touches.first!
         let positionInScene = touch.location(in: self)
-        let touchedNode = grid.atPoint(positionInScene)
-        print("touchedNode position: \(touchedNode.position)")
         let xConstraintLow = positionInScene.x - CGFloat(tileSize / 2)
         let xConstraintHigh = positionInScene.x + CGFloat(tileSize / 2)
         let yConstraintLow = positionInScene.y - CGFloat(tileSize / 2)
@@ -152,6 +154,7 @@ class GameScene: SKScene {
                 if superGridArray[i][j].position.x >= xConstraintLow && superGridArray[i][j].position.x <= xConstraintHigh && superGridArray[i][j].position.y >= yConstraintLow && superGridArray[i][j].position.y <= yConstraintHigh {
                     print("tile: \(superGridArray[i][j].name ?? "") was touched")
                     let tile = SKSpriteNode(imageNamed: tileImageName)
+                    // TODO: add label for selected node
                     tile.setScale(0.92)
                     tile.position = CGPoint(x: Int(superGridArray[i][j].position.x), y: Int(superGridArray[i][j].position.y) + Int(0.25))
                     print(tile.position)
@@ -161,74 +164,42 @@ class GameScene: SKScene {
                 }
             }
         }
-        
-        
-        
-        
-        /*print("frame midX: \(frame.maxX) frame midY: \(frame.maxY)")
-        let touch: UITouch = touches.first!
-        let otherPos = touch.location(in: grid)
-        print("otherPos: \(otherPos)")
-        let positionInScene = touch.location(in: self) // right
-        let touchedNodes = self.nodes(at: positionInScene)
-       /*for node in touchedNodes {
-            let nodePositionConverted = self.convert(node.position, from: node)
-        let nodeFrameConverted = CGRect(origin: CGPoint(x:nodePositionConverted.x-node.frame.maxX,y:nodePositionConverted.y-node.frame.maxY),size:node.frame.size)
-        print("node position converted: \(nodePositionConverted)")
-        if nodeFrameConverted.contains(positionInScene) {
-            let newName = node.name ?? ""
-            print("new node name: \(newName)")
-        }
-        }*/
-        let touchedNode = self.atPoint(positionInScene) // wrong
-        let absolutePosition = touchedNode.convert(touchedNode.position,to: touchedNode.self)
-        self.convertPoint(toView: absolutePosition)
-        //let touchedNode = touchedNodes[0]
-       //let touchedNode = self.atPoint(<#T##p: CGPoint##CGPoint#>)
-       print("absolute position: \(absolutePosition)")
-        let nodePositionConverted = grid.convert(touchedNode.position, from: touchedNode)
-        print("converted x: \(nodePositionConverted.x/2) converted y: \(nodePositionConverted.y/2)")
-        print("positionInScene: \(positionInScene)")
-        print("touchedNode.position: \(touchedNode.position)")
-        let tile = SKSpriteNode(imageNamed: tileImageName)
-        tile.setScale(0.92)
-        let newPosition = touchedNode.convert(positionInScene, to: componentLayer)
-        print ("new position:\(newPosition)")
-        if let name = touchedNode.name
-        {
-            print(touchedNode.name!)
-            // a tile node was touched
-            if name.count == 2 {
-                for i in 0..<9 {
-                    for j in 0..<9 {
-                        //if name == String(i)+String(j) {
-                        print("\(superGridArray[i][j].position)")
-                        //if superGridArray[i][j].name == name {
-                        if superGridArray[i][j].contains(CGPoint(x: positionInScene.y, y: positionInScene.x)) {
-                            print("tile \(superGridArray[i][j].name!) touched, position of tile: \(superGridArray[i][j].position)")
-                            print("touchedNode: \(touchedNode.name) position: \(touchedNode.position)")
-                            let tile = SKSpriteNode(imageNamed: tileImageName)
-                            tile.setScale(0.92)
-                            tile.position = CGPoint(x: Int(superGridArray[i][j].position.x), y: Int(superGridArray[i][j].position.y) + Int(0.25))
-                            print(tile.position)
-                            componentLayer.zPosition = 1
-                            componentLayer.addChild(tile)
-                            return
-                        }
-                    }
+        for i in 0..<9 {
+            if choiceTileArray[i].position.x >= xConstraintLow && choiceTileArray[i].position.x <= xConstraintHigh && choiceTileArray[i].position.y >= yConstraintLow && choiceTileArray[i].position.y <= yConstraintHigh {
+                if let name = choiceTileArray[i].name {
+                    print("tile \(name) touched, i + 1 check: \(i + 1)")
                 }
             }
-            // a choice node was touched
-            else if name.count == 1 {
-                for i in 0..<9 {
-                    if name == String(i + 1) {
-                        print("tile \(name) touched, i + 1 check: \(i + 1)")
-                        //touchedNode.addGlow() as! SKSpriteNode
-                    }
+            
+        }
+        // TODO: else in background, deselect node
+    }
+    
+    func populateGameboard() {
+        self.sudoku.populateArrays()
+        
+        for i in 0..<9 {
+            for j in 0..<9 {
+                if sudoku.ogPuzzle[i][j] != 0 {
+                    let tile = SKSpriteNode(imageNamed: tileImageName)
+                    let tileLabel = SKLabelNode()
+                    tileLabel.setScale(0.92)
+                    tileLabel.text = String(sudoku.ogPuzzle[i][j]!)
+                    tileLabel.fontName = gameFont
+                    tileLabel.fontSize = 40
+                    tileLabel.zPosition = 1
+                    tile.name = String(i) + String(j)
+                    // TODO: add label for selected node
+                    tile.setScale(0.92)
+                    tile.position = CGPoint(x: Int(superGridArray[i][j].position.x), y: Int(superGridArray[i][j].position.y) + Int(0.25))
+                    tileLabel.position = CGPoint(x: Int(superGridArray[i][j].position.x), y: Int(superGridArray[i][j].position.y - 15) + Int(0.25))
+                    print(tile.position)
+                    componentLayer.zPosition = 1
+                    componentLayer.addChild(tile)
+                    componentLayer.addChild(tileLabel)
                 }
-           }
-            // TODO: else in background, deselect node
-        }*/
+            }
+        }
     }
 }
 
