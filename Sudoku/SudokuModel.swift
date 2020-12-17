@@ -16,6 +16,7 @@ class Sudoku {
     var ogPuzzle = [[Int?]](repeating: [Int?](repeating: 0, count: 9), count: 9)
     var solutionStr: String = "679518243543729618821634957794352186358461729216897534485276391962183475137945862"
     var solution = [[Int?]](repeating: [Int?](repeating: 0, count: 9), count: 9)
+    var selectedTile: Int?
     
     
     func populateArrays() {

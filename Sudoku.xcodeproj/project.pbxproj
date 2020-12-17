@@ -21,6 +21,7 @@
 		777FBB5825775DDB004A59D6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 777FBB5625775DDB004A59D6 /* LaunchScreen.storyboard */; };
 		777FBB6325775DDB004A59D6 /* SudokuTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 777FBB6225775DDB004A59D6 /* SudokuTests.swift */; };
 		777FBB6E25775DDB004A59D6 /* SudokuUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 777FBB6D25775DDB004A59D6 /* SudokuUITests.swift */; };
+		77EAD16E258AFB1E00AB1A5E /* Glypha-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 77EAD16D258AFB1E00AB1A5E /* Glypha-Black.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,7 @@
 		777FBB6925775DDB004A59D6 /* SudokuUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SudokuUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		777FBB6D25775DDB004A59D6 /* SudokuUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SudokuUITests.swift; sourceTree = "<group>"; };
 		777FBB6F25775DDB004A59D6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		77EAD16D258AFB1E00AB1A5E /* Glypha-Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Glypha-Black.otf"; path = "../../../../../Downloads/Glypha-Black.otf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +113,7 @@
 		777FBB4625775DD9004A59D6 /* Sudoku */ = {
 			isa = PBXGroup;
 			children = (
+				77EAD16D258AFB1E00AB1A5E /* Glypha-Black.otf */,
 				777FBB4D25775DD9004A59D6 /* GameScene.swift */,
 				777DC06A2578F3EF00CC1B97 /* MenuScene.swift */,
 				777FBB4F25775DD9004A59D6 /* GameViewController.swift */,
@@ -256,6 +259,7 @@
 				777FBB4A25775DD9004A59D6 /* GameScene.sks in Resources */,
 				777FBB5525775DDB004A59D6 /* Assets.xcassets in Resources */,
 				777FBB5825775DDB004A59D6 /* LaunchScreen.storyboard in Resources */,
+				77EAD16E258AFB1E00AB1A5E /* Glypha-Black.otf in Resources */,
 				777FBB4C25775DD9004A59D6 /* Actions.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -20,7 +20,7 @@ class GameScene: SKScene {
     var tileLayer = SKNode()
     let grid = Grid()
     let tileImageName = "Demo_Sudoku_Tile"
-    let gameFont = "HelveticaNeue"
+    let gameFont = "Glypha 75 Black"//"HelveticaNeue"
     var timer: Timer? = nil
     var timerLabel = SKLabelNode()
     var minutes: Int = 0
@@ -47,12 +47,11 @@ class GameScene: SKScene {
         print("in gameScene")
         self.componentLayer.zPosition = 1
         self.addChild(componentLayer)
-        
         // score label set up
         self.score = 0
         self.scoreLabel.position = CGPoint(x: -245,y: -365)
         self.scoreLabel.fontSize = 40
-        self.scoreLabel.fontName = gameFont + "-Bold"
+        self.scoreLabel.fontName = gameFont
         self.scoreLabel.zPosition = 1
         self.componentLayer.addChild(scoreLabel)
         
@@ -60,7 +59,7 @@ class GameScene: SKScene {
         startTimer()
         self.timerLabel.position = CGPoint(x: 0, y: 372)
         self.timerLabel.fontSize = 50
-        self.timerLabel.fontName = gameFont + "-Bold"
+        self.timerLabel.fontName = gameFont
         self.componentLayer.addChild(timerLabel)
         
         background = SKSpriteNode(imageNamed: "SudokuBoardBackground1.png")
@@ -85,16 +84,16 @@ class GameScene: SKScene {
                 for j in 0..<9 {
                     //let tile = SKSpriteNode(imageNamed: "tileImageName")
                     let tile = SKSpriteNode(color: .clear , size: grid.size)
-                    let tileLabel = SKLabelNode()
+                    //let tileLabel = SKLabelNode()
                     tile.setScale(1)
                     tile.position = grid.gridPosition(row: i, col: j)
                     tile.name = String(i) + String(j)
-                    tileLabel.text = tile.name
-                    tileLabel.position = tile.position
+                    //tileLabel.text = tile.name
+                    //tileLabel.position = tile.position
                     tile.isUserInteractionEnabled = false
-                    print(tile.name!, tileLabel.text!)
+                    //print(tile.name!, tileLabel.text!)
                     grid.addChild(tile)
-                    grid.addChild(tileLabel)
+                    //grid.addChild(tileLabel)
                     self.superGridArray[i][j] = tile
                     print("tile: \(self.superGridArray[i][j].name!) position: \(self.superGridArray[i][j].position)")
                     //print(superGridArray[i][j].name!)
@@ -114,7 +113,7 @@ class GameScene: SKScene {
             let tileLabel = SKLabelNode()
             tile.setScale(1)
             tileLabel.text = String(i)
-            tileLabel.fontName = gameFont + "-Bold"
+            tileLabel.fontName = gameFont
             tileLabel.fontSize = 40
             tile.name = String(i)
             //let x = CGFloat(i) * tileSize - (tileSize * CGFloat(9)) / 2.0 + offset
@@ -149,6 +148,7 @@ class GameScene: SKScene {
         let yConstraintLow = positionInScene.y - CGFloat(tileSize / 2)
         let yConstraintHigh = positionInScene.y + CGFloat(tileSize / 2)
         
+        // TODO: add glow to selected tile
         for i in 0..<9 {
             for j in 0..<9 {
                 if superGridArray[i][j].position.x >= xConstraintLow && superGridArray[i][j].position.x <= xConstraintHigh && superGridArray[i][j].position.y >= yConstraintLow && superGridArray[i][j].position.y <= yConstraintHigh {
@@ -201,6 +201,10 @@ class GameScene: SKScene {
             }
         }
     }
+    
+    func glowTile() {
+        // pass in tile to glow, call from touches. make any tile capable of glowing, but if it is a selected tile then make all board tiles glow
+    }
 }
 
 class Grid: SKSpriteNode {
@@ -208,7 +212,7 @@ class Grid: SKSpriteNode {
     var cols: Int!
     var tileSize: CGFloat!
 
-    convenience init?(blockSize:CGFloat,rows:Int,cols:Int) {
+    convenience init?(blockSize: CGFloat,rows: Int, cols: Int) {
         guard let texture = Grid.gridTexture(blockSize: blockSize,rows: rows, cols:cols) else {
             return nil
         }
@@ -218,7 +222,7 @@ class Grid: SKSpriteNode {
         self.cols = cols
     }
 
-    class func gridTexture(blockSize:CGFloat, rows:Int, cols:Int) -> SKTexture? {
+    class func gridTexture(blockSize: CGFloat, rows: Int, cols: Int) -> SKTexture? {
         // Add 1 to the height and width to ensure the borders are within the sprite
         let size = CGSize(width: CGFloat(cols) * blockSize + 1.0, height: CGFloat(rows) * blockSize + 2.0)
         UIGraphicsBeginImageContext(size)
