@@ -16,6 +16,7 @@ class GameScene: SKScene {
     var superGridArray = [[SKSpriteNode]](repeating: [SKSpriteNode](repeating: SKSpriteNode() , count: 9), count: 9) // holds outside Grids
     var choiceTileArray = [SKSpriteNode](repeating: SKSpriteNode(), count: 9)
     var choiceLabelArray = [SKLabelNode](repeating: SKLabelNode(), count: 9)
+    var spikeArray = [SKSpriteNode](repeating: SKSpriteNode(), count: 3)
     var background = SKSpriteNode() // where image will be set
     var componentLayer = SKNode() // contains grid, choice tiles, timer etc
     var tileLayer = SKNode()
@@ -60,6 +61,7 @@ class GameScene: SKScene {
     var boardBorderArray = [[SKShapeNode]](repeating: [SKShapeNode](repeating: SKShapeNode() , count: 9), count: 9)
     let glow: Float = 50
     let unglow: Float = 0
+    var numSpikesRemaining = 3
     
     override func didMove(to view: SKView) {
         //self.anchorPoint = CGPoint(x: frame.midX, y: frame.midY)
@@ -77,7 +79,7 @@ class GameScene: SKScene {
         
         // multiplier label set up
         self.multiplier = 20
-        self.multiplierLabel.position = CGPoint(x: 0, y: 335)
+        self.multiplierLabel.position = CGPoint(x: 275, y: -365)
         self.multiplierLabel.fontSize = 40
         self.multiplierLabel.fontName = gameFont
         self.multiplierLabel.zPosition = 1
@@ -96,8 +98,16 @@ class GameScene: SKScene {
         background.zPosition = -1
         addChild(background)
         
-        
-     
+        var xPosition = -150
+        for i in 0..<3 {
+            let spikeSprite = SKSpriteNode(imageNamed: "FullBulldog.png")
+            spikeSprite.position = CGPoint(x: xPosition, y: -450)
+            spikeSprite.setScale(0.125)
+            spikeArray[i] = spikeSprite
+            self.componentLayer.addChild(spikeSprite)
+            xPosition+=150
+        }
+    
         //"SudokuBoardBackground1.png"
         loadBoard()
         createNumberChoiceNodes()
