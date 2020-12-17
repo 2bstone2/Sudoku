@@ -19,6 +19,7 @@ class GameScene: SKScene {
     var componentLayer = SKNode() // contains grid, choice tiles, timer etc
     var tileLayer = SKNode()
     let grid = Grid()
+    let glowColor = "red"
     let tileImageName = "Demo_Sudoku_Tile"
     let gameFont = "Glypha 75 Black"//"HelveticaNeue"
     var timer: Timer? = nil
@@ -41,6 +42,9 @@ class GameScene: SKScene {
         }
     }
     var sudoku = Sudoku()
+    var glowEffectNodeArray = [SKEffectNode](repeating: SKEffectNode(), count: 9)
+    let glow: Float = 50
+    let unglow: Float = 0
     
     override func didMove(to view: SKView) {
         //self.anchorPoint = CGPoint(x: frame.midX, y: frame.midY)
@@ -70,6 +74,7 @@ class GameScene: SKScene {
         //"SudokuBoardBackground1.png"
         loadBoard()
         createNumberChoiceNodes()
+        initializeGlowEffectNodes()
         populateGameboard()
     }
     
@@ -138,6 +143,15 @@ class GameScene: SKScene {
         })
     }
     
+    
+    func initializeGlowEffectNodes() {
+        for i in 0..<choiceTileArray.count {
+            let effectNode = SKEffectNode()
+            self.glowEffectNodeArray[i] = effectNode
+            self.choiceTileArray[i].initializeGlowEffectNodes(effectNode: self.glowEffectNodeArray[i])
+        }
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
     {
         //let touchedNode = grid.atPoint(positionInScene)
@@ -165,14 +179,18 @@ class GameScene: SKScene {
             }
         }
         for i in 0..<9 {
+            choiceTileArray[i].addGlow(radius: unglow, effectNode: glowEffectNodeArray[i])
             if choiceTileArray[i].position.x >= xConstraintLow && choiceTileArray[i].position.x <= xConstraintHigh && choiceTileArray[i].position.y >= yConstraintLow && choiceTileArray[i].position.y <= yConstraintHigh {
                 if let name = choiceTileArray[i].name {
-                    print("tile \(name) touched, i + 1 check: \(i + 1)")
+                    sudoku.selectedChoiceTile = Int(name)
+                    // deselect and unglow previous selected
+                    choiceTileArray[i].addGlow(radius: glow, effectNode: glowEffectNodeArray[i])
+                    print("The selected tile is: \(sudoku.selectedChoiceTile!)")
                 }
             }
             
         }
-        // TODO: else in background, deselect node
+        // TODO: else in background, deselect node and unglow
     }
     
     func populateGameboard() {
@@ -238,14 +256,12 @@ class Grid: SKSpriteNode {
         // Draw vertical lines
         for i in 0...3 {
             let outerX = (3 * CGFloat(i) * blockSize) + offset
-            print("vert outerX: \(outerX)")
             outerBezierPath.move(to: CGPoint(x: outerX, y: 0))
             outerBezierPath.addLine(to: CGPoint(x: outerX, y: size.height + 20))
         }
         // Draw horizontal lines
         for i in 0...3 {
             let outerY = (3 * CGFloat(i) * blockSize) + offset
-            print("horiz outerY: \(outerY)")
             outerBezierPath.move(to: CGPoint(x: 0, y: outerY))
             outerBezierPath.addLine(to: CGPoint(x: size.width + 20, y: outerY))
         }
@@ -294,19 +310,26 @@ extension SKSpriteNode {
         shapeNode.lineWidth = 3
         addChild(shapeNode)
     }
+    func initializeGlowEffectNodes(effectNode: SKEffectNode) {
+        self.addChild(effectNode)
+            effectNode.addChild(SKSpriteNode(texture: texture))
+    }
 
-    func addGlow(radius: Float = 30) {
+    func addGlow(radius: Float, effectNode: SKEffectNode) {
         /*let ball = SKShapeNode()
         ball.lineWidth = 1
         ball.fillColor = .blue
         ball.strokeColor = .white
         ball.glowWidth = 0.5*/
-        
-        let effectNode = SKEffectNode()
-        effectNode.shouldRasterize = true
-        addChild(effectNode)
-        effectNode.addChild(SKSpriteNode(texture: texture))
-        effectNode.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius":radius])
-    }
+        if radius != 0 {
+            effectNode.shouldRasterize = true
+        }
+        else {
+            effectNode.shouldRasterize = false
+        }
+        //addChild(effectNode)
+        //effectNode.addChild(SKSpriteNode(texture: texture))
+        effectNode.filter = CIFilter(name: "CIGaussianBlur", parameters: ["inputRadius": radius])
+}
 
 }
