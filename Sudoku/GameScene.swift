@@ -12,9 +12,12 @@ import GameplayKit
 class GameScene: SKScene {
     // TODO: Make a subclass
     //var arr = [[Int]](repeating: [Int](repeating: 0, count: 5), count: 5)
+    var tileSize = 72.0
     var superGridArray = [[SKSpriteNode]](repeating: [SKSpriteNode](repeating: SKSpriteNode() , count: 9), count: 9) // holds outside Grids
     var background = SKSpriteNode() // where image will be set
     var componentLayer = SKNode() // contains grid, choice tiles, timer etc
+    var tileLayer = SKNode()
+    let grid = Grid()
     let tileImageName = "Demo_Sudoku_Tile"
     let gameFont = "HelveticaNeue"
     var timer: Timer? = nil
@@ -27,19 +30,37 @@ class GameScene: SKScene {
             //timerLabel.text = "\(seconds / 60):\(seconds % 60)"
         }
     }
+    var scoreLabel = SKLabelNode()
+    var score: Int = 0 {
+        didSet {
+            let numberFormatter = NumberFormatter()
+            numberFormatter.numberStyle = .decimal
+            let formattedNumber = numberFormatter.string(from: NSNumber(value: score))
+            scoreLabel.text = "Score: " + formattedNumber!
+        }
+    }
     
     override func didMove(to view: SKView) {
+        //self.anchorPoint = CGPoint(x: frame.midX, y: frame.midY)
         print("in gameScene")
         self.componentLayer.zPosition = 1
         self.addChild(componentLayer)
+        
+        // score label set up
+        self.score = 0
+        self.scoreLabel.position = CGPoint(x: -245,y: -365)
+        self.scoreLabel.fontSize = 40
+        self.scoreLabel.fontName = gameFont + "-Bold"
+        self.scoreLabel.zPosition = 1
+        self.componentLayer.addChild(scoreLabel)
+        
+        // timer set up
         startTimer()
         self.timerLabel.position = CGPoint(x: 0, y: 372)
         self.timerLabel.fontSize = 50
         self.timerLabel.fontName = gameFont + "-Bold"
         self.componentLayer.addChild(timerLabel)
         
-        // TODO: Load GU theme image later
-        //self.backgroundColor = UIColor.systemGray2
         background = SKSpriteNode(imageNamed: "SudokuBoardBackground1.png")
         background.size = CGSize(width: self.frame.width, height: self.frame.height)
         background.zPosition = -1
@@ -80,8 +101,10 @@ class GameScene: SKScene {
     }
     
     func createNumberChoiceNodes() {
-        let tileSize = 72.0
+        //let tileSize = 72.0
         let offset = tileSize / 2.0 + 0.5
+        
+        // TODO: maybe add a clear tile over label and node so it can glow and this is the one that picks up on the touch
         
         for i in 1..<10 {
             let tile = SKSpriteNode(imageNamed: tileImageName)
@@ -89,6 +112,7 @@ class GameScene: SKScene {
             tile.setScale(1)
             tileLabel.text = String(i)
             tileLabel.fontName = gameFont + "-Bold"
+            tileLabel.fontSize = 40
             tile.name = String(i)
             //let x = CGFloat(i) * tileSize - (tileSize * CGFloat(9)) / 2.0 + offset
             let x1 = CGFloat(i) * CGFloat(tileSize)
@@ -96,7 +120,7 @@ class GameScene: SKScene {
             let x = (x1 - x2)
             let y = CGFloat(-550)
             tile.position = CGPoint(x: x, y: y)
-            tileLabel.position = CGPoint(x: x, y: y - 8)
+            tileLabel.position = CGPoint(x: x, y: y - 12)
             tile.isUserInteractionEnabled = false
             tile.zPosition = 0
             tileLabel.zPosition = 1
@@ -113,27 +137,83 @@ class GameScene: SKScene {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
     {
+        //let touchedNode = grid.atPoint(positionInScene)
         let touch: UITouch = touches.first!
         let positionInScene = touch.location(in: self)
-        let touchedNode = self.atPoint(positionInScene)
-        print("positionInScene: \(positionInScene)")
+        let touchedNode = grid.atPoint(positionInScene)
+        print("touchedNode position: \(touchedNode.position)")
+        let xConstraintLow = positionInScene.x - CGFloat(tileSize / 2)
+        let xConstraintHigh = positionInScene.x + CGFloat(tileSize / 2)
+        let yConstraintLow = positionInScene.y - CGFloat(tileSize / 2)
+        let yConstraintHigh = positionInScene.y + CGFloat(tileSize / 2)
         
+        for i in 0..<9 {
+            for j in 0..<9 {
+                if superGridArray[i][j].position.x >= xConstraintLow && superGridArray[i][j].position.x <= xConstraintHigh && superGridArray[i][j].position.y >= yConstraintLow && superGridArray[i][j].position.y <= yConstraintHigh {
+                    print("tile: \(superGridArray[i][j].name ?? "") was touched")
+                    let tile = SKSpriteNode(imageNamed: tileImageName)
+                    tile.setScale(0.92)
+                    tile.position = CGPoint(x: Int(superGridArray[i][j].position.x), y: Int(superGridArray[i][j].position.y) + Int(0.25))
+                    print(tile.position)
+                    componentLayer.zPosition = 1
+                    componentLayer.addChild(tile)
+                    return
+                }
+            }
+        }
+        
+        
+        
+        
+        /*print("frame midX: \(frame.maxX) frame midY: \(frame.maxY)")
+        let touch: UITouch = touches.first!
+        let otherPos = touch.location(in: grid)
+        print("otherPos: \(otherPos)")
+        let positionInScene = touch.location(in: self) // right
+        let touchedNodes = self.nodes(at: positionInScene)
+       /*for node in touchedNodes {
+            let nodePositionConverted = self.convert(node.position, from: node)
+        let nodeFrameConverted = CGRect(origin: CGPoint(x:nodePositionConverted.x-node.frame.maxX,y:nodePositionConverted.y-node.frame.maxY),size:node.frame.size)
+        print("node position converted: \(nodePositionConverted)")
+        if nodeFrameConverted.contains(positionInScene) {
+            let newName = node.name ?? ""
+            print("new node name: \(newName)")
+        }
+        }*/
+        let touchedNode = self.atPoint(positionInScene) // wrong
+        let absolutePosition = touchedNode.convert(touchedNode.position,to: touchedNode.self)
+        self.convertPoint(toView: absolutePosition)
+        //let touchedNode = touchedNodes[0]
+       //let touchedNode = self.atPoint(<#T##p: CGPoint##CGPoint#>)
+       print("absolute position: \(absolutePosition)")
+        let nodePositionConverted = grid.convert(touchedNode.position, from: touchedNode)
+        print("converted x: \(nodePositionConverted.x/2) converted y: \(nodePositionConverted.y/2)")
+        print("positionInScene: \(positionInScene)")
+        print("touchedNode.position: \(touchedNode.position)")
+        let tile = SKSpriteNode(imageNamed: tileImageName)
+        tile.setScale(0.92)
+        let newPosition = touchedNode.convert(positionInScene, to: componentLayer)
+        print ("new position:\(newPosition)")
         if let name = touchedNode.name
         {
+            print(touchedNode.name!)
             // a tile node was touched
             if name.count == 2 {
                 for i in 0..<9 {
                     for j in 0..<9 {
                         //if name == String(i)+String(j) {
-                        if superGridArray[i][j].contains(positionInScene) {
+                        print("\(superGridArray[i][j].position)")
+                        //if superGridArray[i][j].name == name {
+                        if superGridArray[i][j].contains(CGPoint(x: positionInScene.y, y: positionInScene.x)) {
                             print("tile \(superGridArray[i][j].name!) touched, position of tile: \(superGridArray[i][j].position)")
                             print("touchedNode: \(touchedNode.name) position: \(touchedNode.position)")
                             let tile = SKSpriteNode(imageNamed: tileImageName)
                             tile.setScale(0.92)
-                            tile.position = CGPoint(x: Int(touchedNode.position.x), y: Int(touchedNode.position.y) + Int(0.25))
+                            tile.position = CGPoint(x: Int(superGridArray[i][j].position.x), y: Int(superGridArray[i][j].position.y) + Int(0.25))
+                            print(tile.position)
                             componentLayer.zPosition = 1
                             componentLayer.addChild(tile)
-                            return;
+                            return
                         }
                     }
                 }
@@ -146,8 +226,9 @@ class GameScene: SKScene {
                         //touchedNode.addGlow() as! SKSpriteNode
                     }
                 }
-            }
-        }
+           }
+            // TODO: else in background, deselect node
+        }*/
     }
 }
 
@@ -166,7 +247,7 @@ class Grid: SKSpriteNode {
         self.cols = cols
     }
 
-    class func gridTexture(blockSize:CGFloat,rows:Int,cols:Int) -> SKTexture? {
+    class func gridTexture(blockSize:CGFloat, rows:Int, cols:Int) -> SKTexture? {
         // Add 1 to the height and width to ensure the borders are within the sprite
         let size = CGSize(width: CGFloat(cols) * blockSize + 1.0, height: CGFloat(rows) * blockSize + 2.0)
         UIGraphicsBeginImageContext(size)
@@ -182,14 +263,16 @@ class Grid: SKSpriteNode {
         // Draw vertical lines
         for i in 0...3 {
             let outerX = (3 * CGFloat(i) * blockSize) + offset
+            print("vert outerX: \(outerX)")
             outerBezierPath.move(to: CGPoint(x: outerX, y: 0))
-            outerBezierPath.addLine(to: CGPoint(x: outerX, y: size.height + 2))
+            outerBezierPath.addLine(to: CGPoint(x: outerX, y: size.height + 20))
         }
         // Draw horizontal lines
         for i in 0...3 {
             let outerY = (3 * CGFloat(i) * blockSize) + offset
+            print("horiz outerY: \(outerY)")
             outerBezierPath.move(to: CGPoint(x: 0, y: outerY))
-            outerBezierPath.addLine(to: CGPoint(x: size.width + 10, y: outerY))
+            outerBezierPath.addLine(to: CGPoint(x: size.width + 20, y: outerY))
         }
         
         

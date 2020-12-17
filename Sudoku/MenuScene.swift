@@ -10,14 +10,22 @@ import SpriteKit
 import GameplayKit
 
 class MenuScene: SKScene {
-    var background = SKNode() //Assign later with background image
+    var background = SKSpriteNode() //Assign later with background image
     var componentLayer = SKNode()
     var playButton = SKSpriteNode()
     var playButtonLabel = SKLabelNode()
     let gameFont = "HelveticaNeue"
+    var newScene = GameScene()
     
     override func didMove(to view: SKView) {
         print("in menu")
+        
+        
+        self.background = SKSpriteNode(imageNamed: "SudokuBoardBackground1.png")
+        background.size = CGSize(width: self.frame.width, height: self.frame.height)
+        background.zPosition = -1
+        addChild(background)
+        
         self.addChild(componentLayer)
         self.playButton.position = CGPoint(x: 0, y: 0)
         self.playButton = SKSpriteNode(color: UIColor.systemRed, size: CGSize(width: 50, height: 25))
@@ -28,6 +36,7 @@ class MenuScene: SKScene {
         self.playButtonLabel.fontName = gameFont + "-Bold"
         self.playButtonLabel.position = playButton.position
         //self.componentLayer.addChild(playButton)
+        
         self.componentLayer.addChild(playButtonLabel)
         
     }
@@ -63,7 +72,7 @@ class MenuScene: SKScene {
         for touch in touches {
             if touch == touches.first {
                 print("Segue to gameboard")
-                transition()
+                //self.newScene.transition
             }
         }
     }
