@@ -63,12 +63,26 @@ class GameScene: SKScene {
     let glow: Float = 50
     let unglow: Float = 0
     var numSpikes = 0
+    var pauseLabel = SKLabelNode()
+    var pauseNode = SKSpriteNode()
     
     override func didMove(to view: SKView) {
         //self.anchorPoint = CGPoint(x: frame.midX, y: frame.midY)
         print("in gameScene")
         self.componentLayer.zPosition = 1
         self.addChild(componentLayer)
+        
+        // pause label set up
+        self.pauseLabel.text = "Pause"
+        self.pauseLabel.position = CGPoint(x: -255,y: 335)
+        self.pauseNode = SKSpriteNode(color: .clear, size: CGSize(width: 170, height: 100))
+        self.pauseLabel.fontSize = 40
+        self.pauseNode.position = pauseLabel.position
+        self.pauseLabel.fontName = gameFont
+        self.pauseLabel.zPosition = 1
+        self.pauseNode.name = "pause"
+        self.componentLayer.addChild(pauseLabel)
+        self.componentLayer.addChild(pauseNode)
         
         // score label set up
         self.score = 0
@@ -198,13 +212,6 @@ class GameScene: SKScene {
         stopTimer()
     }
     
-    func resetPressed(_ sender: UIButton) {
-        print("hello from reset")
-        stopTimer()
-        seconds = 0
-    }
-    
-    
     func initializeGlowEffectNodes() {
         for i in 0..<9 {
             let effectNode = SKEffectNode()
@@ -247,6 +254,11 @@ class GameScene: SKScene {
                     //choiceTileArray[i].addGlow(radius: glow, effectNode: choiceEffectArray[i])
                     choiceTileArray[i].drawBorder(color: .red, width: 5, borderNode: choiceBorderArray[i])
                     // maybe return, but probably not bc will affect unglowing
+                }
+            }
+            else {
+                if Int(choiceTileArray[i].name!) == sudoku.selectedChoiceTile {
+                    choiceTileArray[i].drawBorder(color: .red, width: 5, borderNode: choiceBorderArray[i])
                 }
             }
         }
@@ -368,18 +380,43 @@ class GameScene: SKScene {
     }
     
     func checkIfGameWon() {
-        if !sudoku.gamePuzzle.contains([0]) {
-            stopTimer()
-            print("GAME WON")
-            //TODO: game won
+        for i in 0..<9 {
+            for j in 0..<9 {
+                if sudoku.gamePuzzle[i][j] == 0 {
+                    return
+                }
+            }
         }
+        stopTimer()
+        print("GAME WON")
+        gameOver()
+        //TODO: game won
     }
     
     func gameOver() {
         //stop timer
+        print("GAME OVER")
         stopTimer()
+        score = 0
+        seconds = 0
+        transition()
         //display score
-        //
+    }
+    
+    func transition() {
+        if let view = self.view as! SKView? {
+            // Load the SKScene from 'GameScene.sks'
+            if let scene = SKScene(fileNamed: "MenuScene") {
+                // Set the scale mode to scale to fit the window
+                scene.scaleMode = .aspectFill
+                    // Present the scene
+                view.presentScene(scene)
+                view.ignoresSiblingOrder = true
+                
+                view.showsFPS = true
+                view.showsNodeCount = true
+            }
+        }
     }
     
 }

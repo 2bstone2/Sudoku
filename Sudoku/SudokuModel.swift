@@ -48,12 +48,14 @@ class Sudoku {
                     solution[i][j] = solutionVal
                     puzzleIdx+=1
                     
-                    print("\(solution[i][j]!)   ", terminator: "")
+                    print("\(ogPuzzle[i][j]!)   ", terminator: "")
                 }
             }
             print("\n")
         }
         gamePuzzle = ogPuzzle
+        print("gamePuzzle: ")
+        print(gamePuzzle)
     }
     
     

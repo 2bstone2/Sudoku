@@ -55,9 +55,8 @@ class MenuScene: SKScene {
                 
                 view.showsFPS = true
                 view.showsNodeCount = true
-                
-                self.sudoku.populateArrays()
             }
+            sudoku.populateArrays()
         }
         
         
@@ -74,7 +73,6 @@ class MenuScene: SKScene {
             if touch == touches.first {
                 print("Segue to gameboard")
                 transition()
-                //self.newScene.transition
             }
         }
     }
