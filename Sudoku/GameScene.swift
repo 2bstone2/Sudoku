@@ -15,6 +15,7 @@ class GameScene: SKScene {
     var tileSize = 72.0
     var superGridArray = [[SKSpriteNode]](repeating: [SKSpriteNode](repeating: SKSpriteNode() , count: 9), count: 9) // holds outside Grids
     var choiceTileArray = [SKSpriteNode](repeating: SKSpriteNode(), count: 9)
+    var choiceLabelArray = [SKLabelNode](repeating: SKLabelNode(), count: 9)
     var background = SKSpriteNode() // where image will be set
     var componentLayer = SKNode() // contains grid, choice tiles, timer etc
     var tileLayer = SKNode()
@@ -25,12 +26,17 @@ class GameScene: SKScene {
     let gameFont = "Glypha 75 Black"//"HelveticaNeue"
     var timer: Timer? = nil
     var timerLabel = SKLabelNode()
+    var multiplierLabel = SKLabelNode()
     var minutes: Int = 0
     var seconds: Int = 0 {
         didSet {
             minutes = seconds / 60 % 60
             timerLabel.text = String(format:"%02i:%02i", minutes, seconds % 60)
             //timerLabel.text = "\(seconds / 60):\(seconds % 60)"
+            // change multiplier here
+            if seconds % 20 == 0 && multiplier > 1 { //decrements every 20 seconds and doesnt drop below 1
+                multiplier-=1
+            }
         }
     }
     var scoreLabel = SKLabelNode()
@@ -42,9 +48,16 @@ class GameScene: SKScene {
             scoreLabel.text = "Score: " + formattedNumber!
         }
     }
+    var multiplier: Int = 20 {
+        didSet {
+            multiplierLabel.text = "x" + String(multiplier)
+        }
+    }
     var sudoku = Sudoku()
     var choiceEffectArray = [SKEffectNode](repeating: SKEffectNode(), count: 9)
     var boardEffectArray = [[SKEffectNode]](repeating: [SKEffectNode](repeating: SKEffectNode() , count: 9), count: 9)
+    var choiceBorderArray = [SKShapeNode](repeating: SKShapeNode(), count: 9)
+    var boardBorderArray = [[SKShapeNode]](repeating: [SKShapeNode](repeating: SKShapeNode() , count: 9), count: 9)
     let glow: Float = 50
     let unglow: Float = 0
     
@@ -53,6 +66,7 @@ class GameScene: SKScene {
         print("in gameScene")
         self.componentLayer.zPosition = 1
         self.addChild(componentLayer)
+        
         // score label set up
         self.score = 0
         self.scoreLabel.position = CGPoint(x: -245,y: -365)
@@ -61,10 +75,19 @@ class GameScene: SKScene {
         self.scoreLabel.zPosition = 1
         self.componentLayer.addChild(scoreLabel)
         
+        // multiplier label set up
+        self.multiplier = 20
+        self.multiplierLabel.position = CGPoint(x: 0, y: 335)
+        self.multiplierLabel.fontSize = 40
+        self.multiplierLabel.fontName = gameFont
+        self.multiplierLabel.zPosition = 1
+        self.componentLayer.addChild(multiplierLabel)
+        
+        
         // timer set up
         startTimer()
         self.timerLabel.position = CGPoint(x: 0, y: 372)
-        self.timerLabel.fontSize = 50
+        self.timerLabel.fontSize = 60
         self.timerLabel.fontName = gameFont
         self.componentLayer.addChild(timerLabel)
         
@@ -92,9 +115,8 @@ class GameScene: SKScene {
             for i in 0..<9 {
                 
                 for j in 0..<9 {
-                    //let tile = SKSpriteNode(imageNamed: "tileImageName")
+
                     let tile = SKSpriteNode(color: .clear , size: grid.size)
-                    //let tileLabel = SKLabelNode()
                     tile.setScale(1)
                     tile.position = grid.gridPosition(row: i, col: j)
                     tile.name = String(i) + String(j)
@@ -103,10 +125,12 @@ class GameScene: SKScene {
                     tile.isUserInteractionEnabled = false
                     //print(tile.name!, tileLabel.text!)
                     grid.addChild(tile)
-                    //grid.addChild(tileLabel)
                     self.superGridArray[i][j] = tile
                     print("tile: \(self.superGridArray[i][j].name!) position: \(self.superGridArray[i][j].position)")
-                    //print(superGridArray[i][j].name!)
+                    let borderNode = SKShapeNode(rectOf: CGSize(width: 70, height: 70))
+                    borderNode.position = tile.position
+                    self.boardBorderArray[i][j] = borderNode
+                    addChild(borderNode)
                 }
             }
         }
@@ -136,6 +160,11 @@ class GameScene: SKScene {
             tile.isUserInteractionEnabled = false
             tile.zPosition = 0
             tileLabel.zPosition = 1
+            let borderNode = SKShapeNode(rectOf: CGSize(width: 70, height: 70))
+            borderNode.position = tile.position
+            self.choiceBorderArray[i - 1] = borderNode
+            self.choiceLabelArray[i - 1] = tileLabel
+            addChild(borderNode)
             self.choiceTileArray[i - 1] = tile
             self.componentLayer.addChild(tile)
             self.componentLayer.addChild(tileLabel)
@@ -176,12 +205,17 @@ class GameScene: SKScene {
         let yConstraintHigh = positionInScene.y + CGFloat(tileSize / 2)
         
         for i in 0..<9 {
-            choiceTileArray[i].addGlow(radius: unglow, effectNode: choiceEffectArray[i])
+           // if sudoku.selectedChoiceTile != Int(choiceTileArray[i].name!) {
+                choiceTileArray[i].drawBorder(color: .clear, width: 5, borderNode: choiceBorderArray[i])
+                // choiceTileArray[i].addGlow(radius: unglow, effectNode: choiceEffectArray[i])
+            //}
+           
             if choiceTileArray[i].position.x >= xConstraintLow && choiceTileArray[i].position.x <= xConstraintHigh && choiceTileArray[i].position.y >= yConstraintLow && choiceTileArray[i].position.y <= yConstraintHigh {
                 if let name = choiceTileArray[i].name {
                     sudoku.selectedChoiceTile = Int(name)
                     // deselect and unglow previous selected
-                    choiceTileArray[i].addGlow(radius: glow, effectNode: choiceEffectArray[i])
+                    //choiceTileArray[i].addGlow(radius: glow, effectNode: choiceEffectArray[i])
+                    choiceTileArray[i].drawBorder(color: .red, width: 5, borderNode: choiceBorderArray[i])
                     print("The selected tile is: \(sudoku.selectedChoiceTile!)")
                     // maybe return, but probably not bc will affect unglowing
                 }
@@ -191,17 +225,21 @@ class GameScene: SKScene {
         // TODO: add glow to selected tile
         for i in 0..<9 {
             for j in 0..<9 {
-                superGridArray[i][j].addGlow(radius: unglow, effectNode: boardEffectArray[i][j])
-                if sudoku.gamePuzzle[i][j] == sudoku.selectedChoiceTile {
-                    superGridArray[i][j].addGlow(radius: glow, effectNode: boardEffectArray[i][j])
+                //superGridArray[i][j].addGlow(radius: unglow, effectNode: boardEffectArray[i][j])
+                superGridArray[i][j].drawBorder(color: UIColor.clear, width: 5, borderNode: boardBorderArray[i][j])
+                if sudoku.gamePuzzle[i][j] == sudoku.selectedChoiceTile && !grid.contains(positionInScene) {
+                    superGridArray[i][j].drawBorder(color: UIColor.red, width: 5, borderNode: boardBorderArray[i][j])
+                    //superGridArray[i][j].addGlow(radius: glow, effectNode: boardEffectArray[i][j])
                     print("adding glow to \(superGridArray[i][j].name!)")
                 }
                 if superGridArray[i][j].position.x >= xConstraintLow && superGridArray[i][j].position.x <= xConstraintHigh && superGridArray[i][j].position.y >= yConstraintLow && superGridArray[i][j].position.y <= yConstraintHigh {
                     superGridArray[i][j].addGlow(radius: glow, effectNode: boardEffectArray[i][j])
+                    superGridArray[i][j].drawBorder(color: .red, width: 5, borderNode: boardBorderArray[i][j])
                     print("tile: \(superGridArray[i][j].name ?? "") was touched")
                     
                     // TODO: check if correct here
                     if sudoku.gamePuzzle[i][j] == 0 && sudoku.selectedChoiceTile == sudoku.solution[i][j] {
+                        sudoku.gamePuzzle[i][j] = sudoku.selectedChoiceTile
                         let tile = SKSpriteNode(imageNamed: tileImageName)
                         let tileLabel = SKLabelNode()
                         // TODO: add label for selected node
@@ -211,11 +249,15 @@ class GameScene: SKScene {
                         tileLabel.text = String(sudoku.solution[i][j]!)
                         tileLabel.fontName = gameFont
                         tileLabel.fontSize = tileFontSize
-                        componentLayer.zPosition = 1
+                        tileLabel.zPosition = 1
                         componentLayer.addChild(tile)
                         componentLayer.addChild(tileLabel)
+                        
+                        // TODO: Call update score
+                        updateScore()
+                        checkIfAllTilesFound(numberToCheck: sudoku.selectedChoiceTile!)
                     }
-                    return
+                    //return
                 }
             }
         }
@@ -249,8 +291,35 @@ class GameScene: SKScene {
             }
         }
     }
+    
+    func updateScore() {
+        score += multiplier * 5
+    }
+    
+    func checkIfAllTilesFound(numberToCheck: Int) {
+        var numCount: Int = 0
+        for i in 0..<9 {
+            for j in 0..<9 {
+                if sudoku.gamePuzzle[i][j] == numberToCheck {
+                    numCount += 1
+                }
+            }
+        }
+        if numCount == 9 {
+            for i in 0..<9 {
+                if choiceTileArray[i].name == String(numberToCheck) {
+                    choiceTileArray[i].isUserInteractionEnabled = true
+                    choiceTileArray[i].removeFromParent()
+                    choiceEffectArray[i].removeFromParent()
+                    choiceBorderArray[i].removeFromParent()
+                    choiceLabelArray[i].removeFromParent()
+                }
+            }
+        }
+    }
+    
 }
-
+// MARK: - Grid
 class Grid: SKSpriteNode {
     var rows: Int!
     var cols: Int!
@@ -329,12 +398,17 @@ class Grid: SKSpriteNode {
 }
 
 extension SKSpriteNode {
-    func drawBorder(color: UIColor, width: CGFloat) {
-        let shapeNode = SKShapeNode(rect: frame)
-        shapeNode.fillColor = .clear
-        shapeNode.strokeColor = color
-        shapeNode.lineWidth = 3
-        addChild(shapeNode)
+    func drawBorder(color: UIColor, width: CGFloat, borderNode: SKShapeNode ) {
+        //let shapeNode = SKShapeNode(rectOf: CGSize(width: 68, height: 68))
+        borderNode.fillColor = .clear
+        borderNode.strokeColor = color
+        borderNode.lineWidth = width
+        borderNode.glowWidth = 10
+        borderNode.zPosition = 2
+        //shapeNode.size = self.size
+        //shapeNode.position = borderNode.position
+       // shapeNode.anchorPoint = self.anchorPoint
+        //addChild(borderNode)
     }
     func initializeGlowEffectNodes(effectNode: SKEffectNode) {
         self.addChild(effectNode)
@@ -350,6 +424,14 @@ extension SKSpriteNode {
 
     func addGlow(radius: Float, effectNode: SKEffectNode) {
         // TODO: check for nil texture here
+        if self.texture == nil && radius != 0 {
+            //self.texture = SKTexture(imageNamed: <#T##String#>)
+        }
+        else if radius == 0 {
+            //self.texture = nil
+        }
+        
+        
         effectNode.shouldRasterize = true
         //addChild(effectNode)
         //effectNode.addChild(SKSpriteNode(texture: texture))
