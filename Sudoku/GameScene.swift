@@ -46,7 +46,7 @@ class GameScene: SKScene {
             let numberFormatter = NumberFormatter()
             numberFormatter.numberStyle = .decimal
             let formattedNumber = numberFormatter.string(from: NSNumber(value: score))
-            scoreLabel.text = "Score: " + formattedNumber!
+            scoreLabel.text = "score: " + formattedNumber!
         }
     }
     var multiplier: Int = 20 {
@@ -73,20 +73,20 @@ class GameScene: SKScene {
         self.addChild(componentLayer)
         
         // pause label set up
-        self.pauseLabel.text = "Pause"
+        self.pauseLabel.text = "pause"
         self.pauseLabel.position = CGPoint(x: -255,y: 335)
-        self.pauseNode = SKSpriteNode(color: .clear, size: CGSize(width: 170, height: 100))
+        self.pauseNode = SKSpriteNode(color: .clear, size: CGSize(width: 170, height: 50))
         self.pauseLabel.fontSize = 40
         self.pauseNode.position = pauseLabel.position
         self.pauseLabel.fontName = gameFont
         self.pauseLabel.zPosition = 1
         self.pauseNode.name = "pause"
-        self.componentLayer.addChild(pauseLabel)
+        //self.componentLayer.addChild(pauseLabel)
         self.componentLayer.addChild(pauseNode)
         
         // score label set up
         self.score = 0
-        self.scoreLabel.position = CGPoint(x: -245,y: -365)
+        self.scoreLabel.position = CGPoint(x: -230,y: -365)
         self.scoreLabel.fontSize = 40
         self.scoreLabel.fontName = gameFont
         self.scoreLabel.zPosition = 1
@@ -111,6 +111,7 @@ class GameScene: SKScene {
         background = SKSpriteNode(imageNamed: "SudokuBoardBackground1.png")
         background.size = CGSize(width: self.frame.width, height: self.frame.height)
         background.zPosition = -1
+        background.isUserInteractionEnabled = true
         addChild(background)
         
         var xPosition = -150
@@ -239,12 +240,9 @@ class GameScene: SKScene {
         let yConstraintLow = positionInScene.y - CGFloat(tileSize / 2)
         let yConstraintHigh = positionInScene.y + CGFloat(tileSize / 2)
         
+
         for i in 0..<9 {
-            //if background.contains(positionInScene) {
-           //if sudoku.selectedChoiceTile == Int(choiceTileArray[i].name!) {
-                choiceTileArray[i].drawBorder(color: .clear, width: 5, borderNode: choiceBorderArray[i])
-                // choiceTileArray[i].addGlow(radius: unglow, effectNode: choiceEffectArray[i])
-            //}
+            choiceTileArray[i].drawBorder(color: .clear, width: 5, borderNode: choiceBorderArray[i])
            
             if choiceTileArray[i].position.x >= xConstraintLow && choiceTileArray[i].position.x <= xConstraintHigh && choiceTileArray[i].position.y >= yConstraintLow && choiceTileArray[i].position.y <= yConstraintHigh {
                 //choiceTileArray[i].drawBorder(color: .clear, width: 5, borderNode: choiceBorderArray[i])
@@ -260,8 +258,14 @@ class GameScene: SKScene {
                 if Int(choiceTileArray[i].name!) == sudoku.selectedChoiceTile {
                     choiceTileArray[i].drawBorder(color: .red, width: 5, borderNode: choiceBorderArray[i])
                 }
+                /*else {
+                    choiceTileArray[i].drawBorder(color: .clear, width: 5, borderNode: choiceBorderArray[i])
+                }*/
             }
         }
+        
+        
+        
         
         // TODO: add glow to selected tile
         for i in 0..<9 {
@@ -299,7 +303,7 @@ class GameScene: SKScene {
                         updateScore()
                         checkIfGameWon()
                         checkIfAllTilesFound(numberToCheck: sudoku.selectedChoiceTile!)
-                        //return
+                        //break
                     }
                    // else if {
                         //
@@ -311,6 +315,20 @@ class GameScene: SKScene {
                 }
             }
         }
+        /* clear all highlights:
+        for i in 0..<9 {
+            choiceTileArray[i].drawBorder(color: .clear, width: 5, borderNode: choiceBorderArray[i])
+
+            for j in 0..<9 {
+                superGridArray[i][j].drawBorder(color: UIColor.clear, width: 5, borderNode: boardBorderArray[i][j])
+            //}
+            if sudoku.gamePuzzle[i][j] == sudoku.selectedChoiceTile && !grid.contains(positionInScene) {
+                superGridArray[i][j].drawBorder(color: UIColor.red, width: 5, borderNode: boardBorderArray[i][j])
+                //superGridArray[i][j].addGlow(radius: glow, effectNode: boardEffectArray[i][j])
+                print("adding glow to \(superGridArray[i][j].name!)")
+            }
+            }
+        }*/
         // TODO: else in background, deselect node and unglow
         //maybe a function to unglow everything
     }
@@ -374,7 +392,8 @@ class GameScene: SKScene {
         self.componentLayer.addChild(spikeArray[numSpikes])
         numSpikes+=1
         
-        if numSpikes == 2 {
+        print("num spikes: \(numSpikes)")
+        if numSpikes == 3 {
             gameOver()
         }
     }
@@ -382,7 +401,7 @@ class GameScene: SKScene {
     func checkIfGameWon() {
         for i in 0..<9 {
             for j in 0..<9 {
-                if sudoku.gamePuzzle[i][j] == 0 {
+                if sudoku.gamePuzzle[i][j]! == 0 {
                     return
                 }
             }
@@ -395,6 +414,7 @@ class GameScene: SKScene {
     
     func gameOver() {
         //stop timer
+        print("num spikes: \(self.numSpikes)")
         print("GAME OVER")
         stopTimer()
         score = 0
@@ -404,19 +424,33 @@ class GameScene: SKScene {
     }
     
     func transition() {
-        if let view = self.view as! SKView? {
+        if let view = self.view {
             // Load the SKScene from 'GameScene.sks'
-            if let scene = SKScene(fileNamed: "MenuScene") {
+            if let menuScene = MenuScene(fileNamed: "MenuScene") {
                 // Set the scale mode to scale to fit the window
-                scene.scaleMode = .aspectFill
+                //self.menuScene = menuScene
+                menuScene.scaleMode = .aspectFill
+                //menuScene.playButtonLabel.text = "play again"
                     // Present the scene
-                view.presentScene(scene)
-                view.ignoresSiblingOrder = true
-                
-                view.showsFPS = true
+                print("hit1")
+                self.view?.presentScene(menuScene)
+                self.view?.ignoresSiblingOrder = true
+                print("hit1.5")
+                self.view?.showsFPS = true
                 view.showsNodeCount = true
+                //self.isPaused = true
+                print("hit2")
             }
         }
+        print("hit3")
+        //newScene.playButtonLabel.text = "play again"
+        let reveal = SKTransition.reveal(with: .down, duration: 6)
+        let newScene = MenuScene()
+        newScene.playButtonLabel.text = "play again"
+        //self.newScene.scaleMode = .aspectFill
+        
+        print("in transition in game scene")
+        scene?.view?.presentScene(newScene, transition: reveal)
     }
     
 }

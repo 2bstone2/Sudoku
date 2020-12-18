@@ -18,6 +18,7 @@ class MenuScene: SKScene {
     var newScene = GameScene()
     var sudoku = Sudoku()
     
+    
     override func didMove(to view: SKView) {
         print("in menu")
         
@@ -32,9 +33,10 @@ class MenuScene: SKScene {
         self.playButton = SKSpriteNode(color: UIColor.systemRed, size: CGSize(width: 50, height: 25))
         self.playButton.isUserInteractionEnabled = false
         
-        self.playButtonLabel.text = "Play"
+        self.playButtonLabel.text = "play"
         self.playButtonLabel.fontSize = 60
         self.playButtonLabel.fontName = gameFont
+        self.playButtonLabel.zPosition = 1
         self.playButtonLabel.position = playButton.position
         //self.componentLayer.addChild(playButton)
         
@@ -45,7 +47,7 @@ class MenuScene: SKScene {
     func transition() {
         if let view = self.view as! SKView? {
             // Load the SKScene from 'GameScene.sks'
-            if let scene = SKScene(fileNamed: "GameScene") {
+            if let scene = GameScene(fileNamed: "GameScene") {
                 // Set the scale mode to scale to fit the window
                 scene.scaleMode = .aspectFill
                     
